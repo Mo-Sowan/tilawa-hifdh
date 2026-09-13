@@ -1,0 +1,33 @@
+# Flutter
+app/build/
+app/.dart_tool/
+app/.flutter-plugins*
+app/.packages
+app/ios/Pods/
+app/ios/.symlinks/
+app/android/.gradle/
+app/android/local.properties
+app/**/GeneratedPluginRegistrant.*
+
+# The recitation model is fetched at runtime; do not commit 88 MB.
+app/assets/model/*.onnx
+
+# .NET
+backend/**/bin/
+backend/**/obj/
+backend/**/App_Data/
+backend/**/Storage/MushafCache/
+
+# Editors / OS
+.idea/
+.vs/
+*.user
+.DS_Store
+
+# Build artifacts (too large / regenerable)
+tilawa-release.apk
+tilawa-web.zip
+*.apk
+*.aab
+app/android/build/
+app/android/app/build/

@@ -1,0 +1,92 @@
+name: tilawa
+description: "Tilawa — Quran hifdh companion with offline, on-device recitation follow-along."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State
+  flutter_riverpod: ^2.6.1
+
+  # Platform / storage
+  sqflite: ^2.4.3
+  path: ^1.9.1
+  path_provider: ^2.1.5
+  flutter_secure_storage: ^9.2.4
+
+  # Networking
+  http: ^1.6.0
+
+  # Auth
+  google_sign_in: ^7.2.0
+  sign_in_with_apple: ^8.2.0
+
+  # On-device inference + audio capture
+  flutter_onnxruntime: ^1.8.4
+  record: ^7.1.1
+  permission_handler: ^12.0.1
+
+  # Utilities
+  crypto: ^3.0.6
+  # Browser APIs used by the web-only storage and download paths.
+  web: ^1.1.1
+  intl: ^0.20.2
+  timezone: ^0.9.4
+  flutter_local_notifications: ^17.2.1
+
+  # UI
+  flutter_animate: ^4.5.2
+  cached_network_image: ^3.4.1
+
+  # Choosing a profile picture. Works on Android, iOS and the web from
+  # the one call, which is why the picture is kept as bytes rather than
+  # as a file path the web build could not honour.
+  image_picker: ^1.1.2
+
+  # Qibla. The heading comes from the magnetometer and the position from the
+  # platform's location service; the bearing to Mecca is computed here rather
+  # than fetched, so the compass works with no network at all.
+  flutter_compass: ^0.8.1
+  geolocator: ^13.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/quran/
+    - assets/model/
+
+  fonts:
+    # Quranic text. Amiri Quran is drawn for the Mushaf: it carries the full
+    # set of Quranic marks and positions them correctly, which the default
+    # system Arabic face does not. SIL OFL, licence in assets/fonts.
+    - family: QuranText
+      fonts:
+        - asset: assets/fonts/AmiriQuran-Regular.ttf
+
+    # Surah titles and Arabic display text. SIL OFL.
+    - family: ScheherazadeNew
+      fonts:
+        - asset: assets/fonts/ScheherazadeNew-Regular.ttf
+        - asset: assets/fonts/ScheherazadeNew-Bold.ttf
+          weight: 700
+
+    # Interface face. Bundled rather than fetched at run time: google_fonts
+    # downloads on first launch, which stalled startup and failed outright
+    # offline — not acceptable in an app built to work without a network.
+    # Variable font, so every weight comes from the one file. SIL OFL.
+    - family: Outfit
+      fonts:
+        - asset: assets/fonts/Outfit-Variable.ttf

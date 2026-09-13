@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Tilawa.Api.Tests/Tilawa.Api.Tests.csproj" />
+  <Project Path="Tilawa.Api/Tilawa.Api.csproj" />
+</Solution>

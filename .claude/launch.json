@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tilawa-web",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8080",
+        "--directory",
+        "C:/Users/m.sowan/Desktop/Project/TilawaHifdh/app/build/web"
+      ],
+      "port": 8080
+    }
+  ]
+}
