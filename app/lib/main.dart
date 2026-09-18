@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilawa/core/theme/app_theme.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/quran_providers.dart';
-import 'package:tilawa/presentation/views/root_navigator.dart';
+import 'package:tilawa/presentation/features/shell/root_navigator.dart';
 import 'package:tilawa/services/notification_service.dart';
 
 Future<void> main() async {

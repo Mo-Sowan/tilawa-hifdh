@@ -8,30 +8,15 @@ ModelManager createModelManager({
   http.Client? httpClient,
   String? downloadUrl,
 }) {
-  return UnsupportedModelManager();
+  return BundledModelManager();
 }
 
-/// Reports that on-device recognition is unavailable in a browser.
+/// Resolves the model already emitted by Flutter's web asset bundler.
 ///
-/// This is not a packaging gap that bundling the model would fix. The export's
-/// quantized convolutions use the `ConvInteger` operator, which ONNX Runtime
-/// Web's WASM backend does not implement — verified by loading the model
-/// through both `onnxruntime-web` 1.21 and the full 1.23 bundle, each of which
-/// fails session creation with:
-///
-///     Could not find an implementation for ConvInteger(10) node with name
-///     '/encoder/pre_encode/conv/conv.0/Conv_quant'
-///
-/// The native runtimes on Android, iOS, Windows, macOS and Linux do implement
-/// it, so recognition works there. If ONNX Runtime Web gains the kernel, or the
-/// model is re-exported without int8 convolutions, this class is the only thing
-/// that needs to change.
-class UnsupportedModelManager implements ModelManager {
-  static const String _reason =
-      'On-device recitation needs the ConvInteger operator, which ONNX Runtime '
-      'Web does not implement. Use the Android, iOS or desktop build to try the '
-      'recogniser.';
-
+/// Downloading and hashing the 88 MB file in Dart would duplicate the browser's
+/// asset request and hold another full copy in memory. The build manifest owns
+/// the asset integrity here; ONNX Runtime streams the same URL into WASM.
+class BundledModelManager implements ModelManager {
   final StreamController<ModelStatus> _statusController =
       StreamController<ModelStatus>.broadcast();
 
@@ -45,14 +30,21 @@ class UnsupportedModelManager implements ModelManager {
 
   @override
   Future<String> ensureModel({required String expectedSha256}) async {
-    _publish(const ModelStatus(stage: ModelStage.failed, message: _reason));
-    throw const ModelUnavailableException(_reason);
+    _publish(
+      const ModelStatus(
+        stage: ModelStage.checking,
+        message: 'Opening the bundled recitation model',
+      ),
+    );
+    _publish(const ModelStatus(stage: ModelStage.ready));
+    return ModelManager.bundledAsset;
   }
 
   @override
-  Future<bool> isModelCached() async => false;
+  Future<bool> isModelCached() async => true;
 
-  /// Nothing is cached, so there is nothing to clear.
+  /// The browser asset is part of the application build and cannot be removed
+  /// independently. Resetting the status still lets callers reopen the session.
   @override
   Future<void> clearCache() async {
     _publish(const ModelStatus(stage: ModelStage.idle));

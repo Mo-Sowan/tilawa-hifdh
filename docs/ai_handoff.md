@@ -36,6 +36,19 @@ reminders - around two revision modes:
 The recogniser reports position and recognition confidence. It never judges
 whether a recitation was "correct", and the recall estimate stays the user's own.
 
+## Runtime Support
+
+The bundled FastConformer model is supported by the native ONNX Runtime used by
+the Android build. Browser builds use ONNX Runtime Web 1.26's WASM provider and
+open the same model from Flutter's asset bundle. This replaced the old platform
+block: versions 1.21 and 1.23 rejected the graph's `ConvInteger` nodes, while the
+current runtime documents complete ONNX operator support for WASM.
+
+Run session-creation and inference smoke tests on the exact checked-in model in a
+real browser before a release. The 88 MB asset makes this a meaningful download
+and memory test even when operator support is correct. Android device QA remains
+required as well.
+
 ## Still Out Of Scope
 
 - Quran quiz engines, missing-word prompts, MCQs, word-sorting exercises.

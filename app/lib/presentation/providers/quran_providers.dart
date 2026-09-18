@@ -8,13 +8,6 @@ final quranTextIndexProvider = FutureProvider<QuranTextIndex>((ref) async {
   return QuranTextIndex.load();
 });
 
-/// Ayahs printed on one Mushaf page (1-604).
-final quranPageProvider =
-    FutureProvider.family<List<QuranAyah>, int>((ref, pageNumber) async {
-  final index = await ref.watch(quranTextIndexProvider.future);
-  return index.pageAyahs(pageNumber);
-});
-
 /// Every ayah of a surah (1-114).
 final quranSurahProvider =
     FutureProvider.family<List<QuranAyah>, int>((ref, surahNumber) async {

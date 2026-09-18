@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tilawa/core/localization/app_strings.dart';
 import 'package:tilawa/core/theme/app_theme.dart';
 import 'package:tilawa/domain/entities/leaderboard_entry.dart';
+import 'package:tilawa/presentation/features/leaderboard/widgets/leaderboard_metrics.dart';
 
 class LeaderboardEntryRow extends StatelessWidget {
   const LeaderboardEntryRow({super.key, required this.entry, required this.strings});

@@ -135,7 +135,7 @@ issue was involved. So:
 | Platform | Recognition |
 | --- | --- |
 | Android, iOS, Windows, macOS, Linux | supported |
-| Web | not supported — the UI says so and disables the microphone |
+| Web | enabled with ONNX Runtime Web 1.26 WASM; live model QA pending |
 
 Two setup details found along the way, both now handled:
 
@@ -147,8 +147,11 @@ Two setup details found along the way, both now handled:
   has to be turned into a real URL, or the fetch 404s and surfaces as a
   misleading "failed to load external data file".
 
-Re-exporting the encoder without int8 convolutions would make a browser build
-possible; `UnsupportedModelManager` is the only place that would need changing.
+The first web integration was disabled after ONNX Runtime Web 1.21 and 1.23
+rejected the encoder's int8 `ConvInteger` nodes. The app now uses version 1.26,
+whose WASM provider documents complete ONNX operator support, and resolves the
+bundled model through `BundledModelManager`. Session creation and inference with
+the exact 88 MB model still need browser release QA.
 
 ## Mastery
 

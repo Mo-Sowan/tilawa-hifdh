@@ -1,66 +1,130 @@
-# Architecture
+# Project structure
 
-## Layers
+Two deliverables in one repo:
 
-- `core`
-- `data`
-- `domain`
-- `presentation`
-- `recitation` (self-contained offline recognition module)
+```
+app/        Flutter client
+backend/    ASP.NET Core 8 API (EF Core + SQLite)
+tools/      Generators for the checked-in Quran datasets
+docs/       This, plus MERGE_NOTES.md and HANDOFF.md
+```
 
-## Core
+## `app/lib` — layers
 
-- Theme
-- Localization
-- Shared constants
+The four layers depend strictly downward: `presentation → domain ← data`, with
+`core` and `services` available to all. Nothing in `domain` imports Flutter.
 
-## Data
+```
+core/          Cross-cutting: config, localization, theme, utils.
+domain/        Entities, repository interfaces, use cases. Pure Dart, no
+               Flutter, no I/O — which is why it is where the rules live
+               (mastery decay, hasanat counting, qibla bearing) and why those
+               are the parts with real unit tests.
+data/          Repository implementations, API client, local database, and the
+               generated Quran datasets.
+services/      Platform edges: on-device storage, notifications.
+presentation/  Everything the reciter sees.
+recitation/    The on-device recogniser, kept as a bounded module (see below).
+```
 
-- API client and offline-first repositories
-- Local database: settings, ayah annotations, recitation sessions
-- `QuranTextIndex`: the bundled corpus as the UI needs it
+### Imports are `package:` URIs, everywhere
 
-No generated Quran text belongs here.
+Not relative paths. Moving a file then only requires repointing references to
+it, rather than recomputing `../..` in every file it touches. It also makes the
+layer a file belongs to legible from its own import list.
 
-## Domain
+## `presentation/` — feature-first
 
-- Surah revision entity
-- Revision plan entity
-- Repository contracts
-- Use cases for overview, weakest/priority Surah, and self-assessment
+```
+presentation/
+  features/
+    <feature>/
+      <feature>_view.dart     The screen: routing, state, layout.
+      widgets/                One file per component on that screen.
+  providers/                  Riverpod providers, shared across features.
+  widgets/                    Widgets used by more than one feature.
+```
 
-## Presentation
+Features: `account`, `auth`, `home`, `leaderboard`, `mushaf`, `onboarding`,
+`plan`, `progress`, `settings`, `shell`, `surah_detail`, `utilities`.
 
-- Dashboard
-- Surah navigator
-- Surah detail/self-assessment
-- Revision plan sheet
-- Reminder banner
+`shell` holds `MainView` and `RootNavigator` — the navigation frame rather than
+a screen of its own.
 
-## Recitation
+**One component per file.** A widget that had been a private class inside a
+1,000-line view is now a public class in its own file. Privacy in Dart is per
+*library*, not per class, so a widget in its own file must be public to be used
+— that is the cost, and it is worth paying: the previous arrangement made
+`home_view.dart` 1,053 lines and gave eight unrelated widgets access to each
+other's internals.
 
-A bounded module with its own layering:
+The rule of thumb: if it has a `build` method, it has a file.
 
-- `engine` - pure Dart, no Flutter: Arabic normalization, edit distance, CTC
-  decoding and forward scoring, the verse index, the streaming tracker.
-- `data` - corpus loader and model download with checksum verification.
-- `service` - ONNX session, the worker isolate that owns it, microphone capture.
-- `presentation` - the live recitation screen and its providers.
+### Where a widget belongs
 
-Inference and matching run on a background isolate. Nothing in `engine` imports
-Flutter, so all of it is unit-testable without a device.
+- Used by one feature → `features/<feature>/widgets/`.
+- Used by two or more → `presentation/widgets/`.
 
-## Not Part Of The Architecture
+A widget that starts in a feature and is later wanted elsewhere moves up. That
+is a real move, not a shortcut import across features: features do not import
+each other's widgets.
 
-- Quran quiz engine
-- Generated Quran prompts
-- AI-created Quran text
-- Quran answer validation
+## `recitation/` — a bounded module
 
-## Ayah Highlighting Overlay
+The recogniser is separate from `presentation/features/` on purpose. It is a
+port of a research codebase with its own engine, corpus, isolate management and
+platform splits, and it changes for reasons that have nothing to do with the
+rest of the app.
 
-The Mushaf image reader uses a mapping layer rather than selectable text:
+```
+recitation/
+  engine/        Pure Dart: decoder, tracker, matcher, normalizer. No Flutter.
+  data/          The recogniser's own corpus and model management.
+  service/       The isolate and ONNX session, with io/web variants.
+  presentation/  The live recitation screen and its widgets.
+```
 
-`Surah -> Ayah -> Page -> Source-image bounding boxes`
+## Platform variants
 
-Highlights and annotation controls are rendered in `MushafAnnotationOverlay` above the scanned page. Original page images are never modified. The mapping layer intentionally ships empty until verified Libyan Qaloon/Jamahiriya coordinate data is imported.
+Where behaviour genuinely differs between mobile and web, the split is a
+conditional import on a shared interface, not an `if (kIsWeb)` scattered
+through the code:
+
+```dart
+import 'local_store_io.dart'
+    if (dart.library.js_interop) 'local_store_web.dart' as impl;
+```
+
+Used by `services/local_store`, `recitation/data/model_manager` and
+`recitation/service/recitation_engine`.
+
+## Quran data is generated, never written by hand
+
+`app/assets/quran/*.json` is produced by the scripts in `tools/` from
+checked-in, checksummed sources. To change what the app displays, change the
+generator and re-run it. Nothing — no person, no model — writes Quranic text
+directly into this repo.
+
+## Tests
+
+```
+app/test/
+  domain/       The rules: mastery decay, hasanat, qibla, preferences.
+  recitation/   The engine.
+  *.dart        Widget and integration tests.
+backend/Tilawa.Api.Tests/
+```
+
+Rules implemented on both sides — mastery decay and the surah difficulty table
+— have mirrored suites in Dart and C#. Change one, change the other.
+
+## Verifying
+
+```bash
+cd app && flutter analyze && flutter test
+cd ../backend && dotnet test
+```
+
+`flutter analyze` is expected to report zero issues. Two environment notes that
+will otherwise cost an hour each are in [HANDOFF.md](HANDOFF.md): Flutter is not
+on `PATH`, and Gradle needs `TEMP`/`TMP` moved off the default.

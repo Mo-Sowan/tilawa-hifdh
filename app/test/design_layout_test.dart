@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tilawa/core/localization/app_strings.dart';
 import 'package:tilawa/core/theme/app_theme.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
-import 'package:tilawa/presentation/views/utilities_view.dart';
+import 'package:tilawa/presentation/features/utilities/utilities_view.dart';
 import 'package:tilawa/presentation/widgets/settings_tile.dart';
 
 void main() {

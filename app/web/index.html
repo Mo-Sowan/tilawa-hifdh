@@ -46,12 +46,10 @@
        session creation fails with a null-check error. Native builds bundle
        their own runtime and ignore this.
 
-       Note: the recitation model itself cannot run here. Its quantized
-       convolutions need the ConvInteger operator, which the WASM backend does
-       not implement (verified against 1.21 and the full 1.23 bundle). This tag
-       is kept so the plugin's web path works for any model that is
-       browser-compatible. -->
-  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/ort.min.js"></script>
+       The earlier 1.21/1.23 runtimes rejected this model's ConvInteger nodes.
+       Current ONNX Runtime Web documents complete ONNX operator support in its
+       WASM execution provider, which is the provider used by this build. -->
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.26.0/dist/ort.min.js"></script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

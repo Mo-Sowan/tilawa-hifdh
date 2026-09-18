@@ -45,6 +45,7 @@ dependencies:
   # UI
   flutter_animate: ^4.5.2
   cached_network_image: ^3.4.1
+  flutter_cache_manager: ^3.4.2
 
   # Choosing a profile picture. Works on Android, iOS and the web from
   # the one call, which is why the picture is kept as bytes rather than

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tilawa/presentation/features/leaderboard/widgets/leaderboard_entry_row.dart';
+import 'package:tilawa/presentation/features/leaderboard/widgets/leaderboard_message.dart';
+import 'package:tilawa/presentation/features/leaderboard/widgets/pinned_leaderboard_row.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/leaderboard_provider.dart';
 

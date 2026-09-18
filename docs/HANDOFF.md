@@ -196,6 +196,35 @@ See `docs/FEATURE_AUDIT.md` for the verified comparison with the eight-feature
 brief. Earlier "done" labels describe implemented behavior; the audit identifies
 remaining differences (estimated non-plan minutes, native-only notifications,
 no Lottie/Rive assets, on-read decay rather than cron, and Adhkar still absent).
+
+## Mushaf, plan and AI follow-up (2026-09-15)
+
+- The reader now has one canonical presentation: scanned pages from the Libyan
+  Qaloon Mushaf. The electronic-text switch and electronic search destination
+  were removed. Search results open the matching scanned page. No Quran dataset
+  or Quran character was generated or edited.
+- Native page downloads use a persistent 604-object cache with a one-year stale
+  period. A phone build skips development-only API hosts (`localhost`,
+  `127.0.0.1`, and `10.0.2.2`) and downloads directly from the archive instead
+  of waiting for an unreachable emulator proxy. Reader prefetch waits for the
+  visible page and then fetches only its immediate neighbours, sequentially.
+- The plan screen explains the three-step workflow, separates existing plans
+  from creation, labels each creation step, shows the selected count beside the
+  final action, and prevents repeated create requests while one is in flight.
+  Existing-plan cards and the detail view show today's completed/total progress
+  and identify the next action.
+- Web recognition is enabled again with ONNX Runtime Web 1.26's WASM provider.
+  The older 1.21/1.23 runtimes rejected the model's `ConvInteger` nodes; current
+  ONNX Runtime documentation states that its WASM provider supports all ONNX
+  operators. The web manager now opens Flutter's bundled model instead of
+  rejecting the platform before session creation. The model and native ONNX
+  Runtime libraries remain present in Android builds.
+- Exact model session creation still needs live browser QA. The local browser
+  smoke-test navigation was blocked when the automatic approval reviewer was at
+  capacity, and no Android device was connected for native inference validation.
+- Direct Dart analysis passes with zero issues. Full Flutter test/build
+  validation remains pending because the automatic approval reviewer was at
+  capacity when the Flutter SDK needed access outside the workspace sandbox.
 ## Remaining / intentionally excluded
 
 - **Adhkar text and UI:** blocked until the user chooses a source. Never generate

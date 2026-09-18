@@ -7,7 +7,7 @@ import 'package:tilawa/presentation/providers/revision_providers.dart';
 import 'package:tilawa/data/datasources/auth_api_client.dart';
 import 'package:tilawa/presentation/providers/auth_provider.dart';
 import 'package:tilawa/presentation/providers/main_tab_provider.dart';
-import 'package:tilawa/presentation/views/account_view.dart';
+import 'package:tilawa/presentation/features/account/account_view.dart';
 
 class AppStatusBar extends ConsumerWidget {
   const AppStatusBar({super.key});

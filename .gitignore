@@ -1,33 +1,75 @@
-# Flutter
-app/build/
-app/.dart_tool/
-app/.flutter-plugins*
-app/.packages
+# ─── Build output ───────────────────────────────────────────────────────────
+build/
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+app/android/.gradle/
+app/android/app/debug/
+app/android/app/profile/
+app/android/app/release/
+app/android/local.properties
 app/ios/Pods/
 app/ios/.symlinks/
-app/android/.gradle/
-app/android/local.properties
-app/**/GeneratedPluginRegistrant.*
-
-# The recitation model is fetched at runtime; do not commit 88 MB.
-app/assets/model/*.onnx
+app/ios/Flutter/ephemeral/
+app/ios/Flutter/Flutter.framework
+app/ios/Flutter/Flutter.podspec
+app/macos/Pods/
+app/macos/Flutter/ephemeral/
+app/linux/flutter/ephemeral/
+app/windows/flutter/ephemeral/
 
 # .NET
-backend/**/bin/
-backend/**/obj/
-backend/**/App_Data/
-backend/**/Storage/MushafCache/
-
-# Editors / OS
-.idea/
-.vs/
+bin/
+obj/
 *.user
-.DS_Store
 
-# Build artifacts (too large / regenerable)
-tilawa-release.apk
-tilawa-web.zip
+# ─── Artefacts too large for git ────────────────────────────────────────────
+# The recogniser model is ~88 MB. It is downloaded on first run and
+# checksum-verified against `onnx_sha256` in assets/quran/export_metadata.json,
+# or dropped into app/assets/model/ by hand for a fully offline build. Either
+# way it is reproducible, so it does not belong in history.
+app/assets/model/*.onnx
+
+# Built apps.
 *.apk
 *.aab
-app/android/build/
-app/android/app/build/
+*.ipa
+*.app.zip
+
+# ─── Local state ────────────────────────────────────────────────────────────
+*.db
+*.db-shm
+*.db-wal
+backend/Tilawa.Api/App_Data/
+backend/Tilawa.Api/Storage/
+
+# ─── Secrets ────────────────────────────────────────────────────────────────
+# Nothing secret is checked in: the JWT signing key and the OAuth client ids
+# are read from the environment (see docker-compose.yml). These patterns stop
+# that changing by accident.
+.env
+.env.*
+!.env.example
+*.keystore
+*.jks
+key.properties
+*.p8
+*.p12
+*.pem
+google-services.json
+GoogleService-Info.plist
+appsettings.Local.json
+appsettings.*.Local.json
+
+# ─── Editors and OS ─────────────────────────────────────────────────────────
+.vs/
+.vscode/
+.idea/
+*.iml
+*.swp
+.DS_Store
+Thumbs.db
+
+# Packaged web build, produced by tools/build_web.ps1.
+tilawa-web.zip

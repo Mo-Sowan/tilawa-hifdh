@@ -11,7 +11,7 @@ import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/revision_plan_provider.dart';
 import 'package:tilawa/presentation/providers/revision_providers.dart';
 import 'package:tilawa/presentation/providers/revision_session_provider.dart';
-import 'package:tilawa/presentation/views/surah_detail_view.dart';
+import 'package:tilawa/presentation/features/surah_detail/surah_detail_view.dart';
 import 'package:tilawa/services/database_service.dart';
 
 class DelayedRepository implements RevisionRepository {
