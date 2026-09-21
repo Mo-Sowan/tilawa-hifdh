@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:http/http.dart' as http;
 
-import 'package:tilawa/recitation/data/model_manager_io.dart'
-    if (dart.library.js_interop) 'package:tilawa/recitation/data/model_manager_web.dart' as impl;
+import 'package:tilawa/features/recitation/data/model_manager_io.dart'
+    if (dart.library.js_interop) 'package:tilawa/features/recitation/data/model_manager_web.dart' as impl;
 
 /// Progress of preparing the on-device model.
 enum ModelStage { idle, checking, downloading, verifying, ready, failed }

@@ -8,7 +8,7 @@ import 'package:tilawa/presentation/widgets/active_revision_card.dart';
 import 'package:tilawa/presentation/widgets/reminder_banner.dart';
 import 'package:tilawa/presentation/widgets/status_bar.dart';
 import 'package:tilawa/presentation/widgets/tarteel_surah_navigator.dart';
-import 'package:tilawa/recitation/presentation/live_recitation_view.dart';
+import 'package:tilawa/features/recitation/presentation/live_recitation_view.dart';
 import 'package:tilawa/presentation/features/home/widgets/quran_completion_card.dart';
 import 'package:tilawa/presentation/features/home/widgets/daily_wisdom_card.dart';
 import 'package:tilawa/presentation/features/home/widgets/daily_goal_progress_card.dart';

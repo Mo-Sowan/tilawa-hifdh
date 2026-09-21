@@ -7,7 +7,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
-import 'package:tilawa/recitation/data/model_manager.dart';
+import 'package:tilawa/features/recitation/data/model_manager.dart';
 
 ModelManager createModelManager({
   http.Client? httpClient,

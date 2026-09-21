@@ -1,5 +1,6 @@
 # ─── Build output ───────────────────────────────────────────────────────────
 build/
+.build-tmp*/
 .dart_tool/
 .packages
 .flutter-plugins

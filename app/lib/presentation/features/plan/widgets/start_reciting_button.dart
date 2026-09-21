@@ -5,7 +5,7 @@ import 'package:tilawa/core/theme/app_theme.dart';
 import 'package:tilawa/domain/entities/revision_plan.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/next_in_plan_provider.dart';
-import 'package:tilawa/recitation/presentation/live_recitation_view.dart';
+import 'package:tilawa/features/recitation/presentation/live_recitation_view.dart';
 
 /// The one button that turns a plan into a recitation.
 ///

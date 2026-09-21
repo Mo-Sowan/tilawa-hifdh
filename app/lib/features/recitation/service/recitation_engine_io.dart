@@ -5,10 +5,10 @@ import 'dart:ui' show RootIsolateToken;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BackgroundIsolateBinaryMessenger;
 
-import 'package:tilawa/recitation/data/model_manager.dart';
-import 'package:tilawa/recitation/engine/recitation_types.dart';
-import 'package:tilawa/recitation/service/recitation_engine.dart';
-import 'package:tilawa/recitation/service/recitation_pipeline.dart';
+import 'package:tilawa/features/recitation/data/model_manager.dart';
+import 'package:tilawa/features/recitation/engine/recitation_types.dart';
+import 'package:tilawa/features/recitation/service/recitation_engine.dart';
+import 'package:tilawa/features/recitation/service/recitation_pipeline.dart';
 
 RecitationEngine createRecitationEngine({ModelManager? modelManager}) =>
     IsolateRecitationEngine(modelManager: modelManager);

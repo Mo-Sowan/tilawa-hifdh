@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
 
-import 'package:tilawa/recitation/engine/ctc_rescore.dart';
+import 'package:tilawa/features/recitation/engine/ctc_rescore.dart';
 
 /// Thin wrapper over the ONNX Runtime session for the recitation model.
 ///

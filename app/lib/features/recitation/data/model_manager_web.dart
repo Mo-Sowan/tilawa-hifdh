@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:http/http.dart' as http;
 
-import 'package:tilawa/recitation/data/model_manager.dart';
+import 'package:tilawa/features/recitation/data/model_manager.dart';
 
 ModelManager createModelManager({
   http.Client? httpClient,

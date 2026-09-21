@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tilawa/core/theme/app_theme.dart';
 import 'package:tilawa/data/quran/quran_text_index.dart';
-import 'package:tilawa/recitation/engine/arabic_normalizer.dart';
-import 'package:tilawa/recitation/presentation/widgets/masked_word.dart';
+import 'package:tilawa/features/recitation/engine/arabic_normalizer.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/masked_word.dart';
 
 /// One ayah, word by word, so each word can be covered on its own.
 ///

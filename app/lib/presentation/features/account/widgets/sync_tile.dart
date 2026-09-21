@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tilawa/recitation/presentation/recitation_providers.dart';
+import 'package:tilawa/features/recitation/presentation/recitation_providers.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/auth_provider.dart';
 import 'package:tilawa/presentation/providers/revision_providers.dart';

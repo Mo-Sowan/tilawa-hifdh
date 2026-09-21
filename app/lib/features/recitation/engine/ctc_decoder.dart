@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:tilawa/recitation/engine/arabic_normalizer.dart';
+import 'package:tilawa/features/recitation/engine/arabic_normalizer.dart';
 
 /// Greedy CTC decode of one inference pass.
 class CtcDecodeResult {

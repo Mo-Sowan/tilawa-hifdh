@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilawa/data/repositories/recitation_session_repository.dart';
 import 'package:tilawa/presentation/providers/revision_providers.dart';
-import 'package:tilawa/recitation/engine/recitation_types.dart';
-import 'package:tilawa/recitation/service/audio_capture.dart';
-import 'package:tilawa/recitation/service/recitation_engine.dart';
+import 'package:tilawa/features/recitation/engine/recitation_types.dart';
+import 'package:tilawa/features/recitation/service/audio_capture.dart';
+import 'package:tilawa/features/recitation/service/recitation_engine.dart';
 
 /// The offline recogniser. One instance for the life of the app: starting it
 /// loads ~90 MB of model and index.

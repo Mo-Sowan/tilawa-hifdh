@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:record/record.dart';
 
-import 'package:tilawa/recitation/engine/recitation_types.dart';
+import 'package:tilawa/features/recitation/engine/recitation_types.dart';
 
 /// Microphone capture producing fixed-size 16 kHz mono `Float32List` chunks.
 ///

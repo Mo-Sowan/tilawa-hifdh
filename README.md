@@ -40,7 +40,7 @@ app/                     Flutter client (Android, iOS, web, Windows, macOS, Linu
   lib/domain/            entities, repository contracts, use cases
   lib/data/              API client, local store, Quran text index
   lib/presentation/      views, widgets, providers
-  lib/recitation/
+  lib/features/recitation/
     engine/              pure Dart: normalizer, Levenshtein, CTC decode/rescore,
                          verse index, streaming tracker
     data/                corpus loader, model download + checksum

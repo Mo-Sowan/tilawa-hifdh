@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:tilawa/recitation/engine/arabic_normalizer.dart';
-import 'package:tilawa/recitation/engine/levenshtein.dart';
-import 'package:tilawa/recitation/engine/recitation_types.dart';
+import 'package:tilawa/features/recitation/engine/arabic_normalizer.dart';
+import 'package:tilawa/features/recitation/engine/levenshtein.dart';
+import 'package:tilawa/features/recitation/engine/recitation_types.dart';
 
 /// Basmala words as they appear after [normalizeArabic].
 const List<String> _basmalaWords = ['بسم', 'الله', 'الرحمن', 'الرحيم'];

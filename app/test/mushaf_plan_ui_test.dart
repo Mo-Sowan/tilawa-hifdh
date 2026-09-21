@@ -5,11 +5,11 @@ import 'package:tilawa/core/localization/app_strings.dart';
 import 'package:tilawa/presentation/features/plan/widgets/plan_composer.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/widgets/mushaf_page_image.dart';
-import 'package:tilawa/recitation/data/model_manager.dart';
-import 'package:tilawa/recitation/data/model_manager_web.dart';
-import 'package:tilawa/recitation/presentation/recitation_providers.dart';
-import 'package:tilawa/recitation/presentation/widgets/recitation_status_bar.dart';
-import 'package:tilawa/recitation/service/recitation_engine.dart';
+import 'package:tilawa/features/recitation/data/model_manager.dart';
+import 'package:tilawa/features/recitation/data/model_manager_web.dart';
+import 'package:tilawa/features/recitation/presentation/recitation_providers.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/recitation_status_bar.dart';
+import 'package:tilawa/features/recitation/service/recitation_engine.dart';
 
 void main() {
   test('native development API addresses do not delay Mushaf scans', () {

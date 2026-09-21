@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:tilawa/recitation/engine/arabic_normalizer.dart';
-import 'package:tilawa/recitation/engine/ctc_decoder.dart';
-import 'package:tilawa/recitation/engine/quran_db.dart';
-import 'package:tilawa/recitation/engine/recitation_types.dart';
+import 'package:tilawa/features/recitation/engine/arabic_normalizer.dart';
+import 'package:tilawa/features/recitation/engine/ctc_decoder.dart';
+import 'package:tilawa/features/recitation/engine/quran_db.dart';
+import 'package:tilawa/features/recitation/engine/recitation_types.dart';
 
 /// Asset paths for the bundled offline corpus.
 class CorpusAssets {

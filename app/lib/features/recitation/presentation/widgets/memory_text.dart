@@ -6,11 +6,11 @@ import 'package:tilawa/data/quran/quran_text_index.dart';
 import 'package:tilawa/domain/entities/surah_revision.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/quran_providers.dart';
-import 'package:tilawa/recitation/presentation/recitation_providers.dart';
-import 'package:tilawa/recitation/presentation/widgets/ayah_block.dart';
-import 'package:tilawa/recitation/presentation/widgets/position_bar.dart';
-import 'package:tilawa/recitation/presentation/widgets/surah_heading.dart';
-import 'package:tilawa/recitation/presentation/widgets/text_page_message.dart';
+import 'package:tilawa/features/recitation/presentation/recitation_providers.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/ayah_block.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/position_bar.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/surah_heading.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/text_page_message.dart';
 
 /// The surah's text, laid out as the Mushaf lays it out, one page at a time.
 ///

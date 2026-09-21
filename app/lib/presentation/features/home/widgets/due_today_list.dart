@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/domain/entities/surah_revision.dart';
-import 'package:tilawa/recitation/presentation/live_recitation_view.dart';
+import 'package:tilawa/features/recitation/presentation/live_recitation_view.dart';
 
 // ─── Due Today List (Sorted Weakest → Strongest) ────────────────────────────
 class DueTodayList extends ConsumerWidget {

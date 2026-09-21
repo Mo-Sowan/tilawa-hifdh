@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:tilawa/recitation/data/quran_corpus.dart';
-import 'package:tilawa/recitation/engine/quran_db.dart';
-import 'package:tilawa/recitation/engine/recitation_tracker.dart';
-import 'package:tilawa/recitation/engine/recitation_types.dart';
-import 'package:tilawa/recitation/service/onnx_asr_session.dart';
+import 'package:tilawa/features/recitation/data/quran_corpus.dart';
+import 'package:tilawa/features/recitation/engine/quran_db.dart';
+import 'package:tilawa/features/recitation/engine/recitation_tracker.dart';
+import 'package:tilawa/features/recitation/engine/recitation_types.dart';
+import 'package:tilawa/features/recitation/service/onnx_asr_session.dart';
 
 /// Corpus + inference session + tracker, wired together.
 ///

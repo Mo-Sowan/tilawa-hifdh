@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tilawa/core/localization/app_strings.dart';
-import 'package:tilawa/recitation/presentation/recitation_providers.dart';
+import 'package:tilawa/features/recitation/presentation/recitation_providers.dart';
 
 /// Where the reciter is and how far into the ayah, in one strip.
 class PositionBar extends StatelessWidget {

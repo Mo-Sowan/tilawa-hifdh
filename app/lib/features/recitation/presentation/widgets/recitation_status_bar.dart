@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tilawa/recitation/service/recitation_engine.dart';
-import 'package:tilawa/recitation/presentation/recitation_providers.dart';
-import 'package:tilawa/recitation/presentation/widgets/status_strip.dart';
+import 'package:tilawa/features/recitation/service/recitation_engine.dart';
+import 'package:tilawa/features/recitation/presentation/recitation_providers.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/status_strip.dart';
 
 /// Model download progress, listening state and errors in one strip.
 class RecitationStatusBar extends StatelessWidget {

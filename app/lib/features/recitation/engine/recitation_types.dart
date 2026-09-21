@@ -1,4 +1,4 @@
-import 'package:tilawa/recitation/engine/arabic_normalizer.dart';
+import 'package:tilawa/features/recitation/engine/arabic_normalizer.dart';
 
 const int sampleRate = 16000;
 

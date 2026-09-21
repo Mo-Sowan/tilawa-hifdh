@@ -9,12 +9,12 @@ import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/quran_providers.dart';
 import 'package:tilawa/presentation/features/mushaf/mushaf_reader_view.dart';
 import 'package:tilawa/presentation/features/surah_detail/surah_detail_view.dart';
-import 'package:tilawa/recitation/service/recitation_engine.dart';
-import 'package:tilawa/recitation/presentation/recitation_providers.dart';
-import 'package:tilawa/recitation/presentation/widgets/memory_text.dart';
-import 'package:tilawa/recitation/presentation/widgets/microphone_button.dart';
-import 'package:tilawa/recitation/presentation/widgets/recitation_status_bar.dart';
-import 'package:tilawa/recitation/presentation/widgets/recitation_timer_bar.dart';
+import 'package:tilawa/features/recitation/service/recitation_engine.dart';
+import 'package:tilawa/features/recitation/presentation/recitation_providers.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/memory_text.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/microphone_button.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/recitation_status_bar.dart';
+import 'package:tilawa/features/recitation/presentation/widgets/recitation_timer_bar.dart';
 
 /// Live recitation screen.
 ///

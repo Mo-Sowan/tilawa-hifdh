@@ -2,13 +2,13 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tilawa/recitation/engine/arabic_normalizer.dart';
-import 'package:tilawa/recitation/engine/ctc_decoder.dart';
-import 'package:tilawa/recitation/engine/ctc_rescore.dart';
-import 'package:tilawa/recitation/engine/levenshtein.dart';
-import 'package:tilawa/recitation/engine/quran_db.dart';
-import 'package:tilawa/recitation/engine/recitation_tracker.dart';
-import 'package:tilawa/recitation/engine/recitation_types.dart';
+import 'package:tilawa/features/recitation/engine/arabic_normalizer.dart';
+import 'package:tilawa/features/recitation/engine/ctc_decoder.dart';
+import 'package:tilawa/features/recitation/engine/ctc_rescore.dart';
+import 'package:tilawa/features/recitation/engine/levenshtein.dart';
+import 'package:tilawa/features/recitation/engine/quran_db.dart';
+import 'package:tilawa/features/recitation/engine/recitation_tracker.dart';
+import 'package:tilawa/features/recitation/engine/recitation_types.dart';
 
 void main() {
   group('normalizeArabic', () {

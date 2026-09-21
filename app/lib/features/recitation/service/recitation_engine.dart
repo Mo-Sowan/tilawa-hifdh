@@ -4,11 +4,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:tilawa/recitation/data/model_manager.dart';
-import 'package:tilawa/recitation/data/quran_corpus.dart';
-import 'package:tilawa/recitation/engine/recitation_types.dart';
-import 'package:tilawa/recitation/service/recitation_engine_io.dart'
-    if (dart.library.js_interop) 'package:tilawa/recitation/service/recitation_engine_web.dart' as impl;
+import 'package:tilawa/features/recitation/data/model_manager.dart';
+import 'package:tilawa/features/recitation/data/quran_corpus.dart';
+import 'package:tilawa/features/recitation/engine/recitation_types.dart';
+import 'package:tilawa/features/recitation/service/recitation_engine_io.dart'
+    if (dart.library.js_interop) 'package:tilawa/features/recitation/service/recitation_engine_web.dart' as impl;
 
 /// Lifecycle of the offline recogniser.
 enum EngineState { idle, preparing, ready, listening, failed, unsupported }
