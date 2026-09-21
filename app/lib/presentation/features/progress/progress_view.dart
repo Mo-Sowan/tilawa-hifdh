@@ -66,7 +66,7 @@ class ProgressView extends ConsumerWidget {
                   title: strings.streak,
                   value: '${summary.streak}',
                   icon: Icons.local_fire_department_rounded,
-                  color: AppColors.rose,
+                  color: AppTheme.streakColour(summary.streak),
                   onTap: () => _showInfoSheet(
                       context, strings.streak, strings.streakDescription),
                 ),

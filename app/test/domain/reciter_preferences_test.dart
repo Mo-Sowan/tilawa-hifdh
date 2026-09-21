@@ -26,15 +26,23 @@ SurahRevision surah(int number, int verses, {bool assessed = false}) =>
 void main() {
   // Shared policy assertions mirror ReciterPreferencesTests.cs.
   test('personal habit wins even over a hard surah', () {
-    expect(
-        SurahDifficulty.coefficientFor(2, personalFrequentlyRecited: {2}), .5);
-    expect(
-        SurahDifficulty.coefficientFor(18, personalFrequentlyRecited: {2}), 1);
-    expect(
-        SurahDifficulty.coefficientFor(4, personalFrequentlyRecited: {2}), 1.5);
-    expect(
-        SurahDifficulty.coefficientFor(114, personalFrequentlyRecited: {2}), 1);
-    expect(SurahDifficulty.coefficientFor(18), .5);
+    // Named by the reciter: holds longest, whatever the text says.
+    expect(SurahDifficulty.coefficientFor(2, personalFrequentlyRecited: {2}),
+        SurahDifficulty.easiestCoefficient);
+
+    // Not named: the measurement stands, and the curated assumption that
+    // everyone reads Al-Kahf on a Friday no longer applies to this reciter.
+    for (final surah in const [18, 4, 114]) {
+      expect(
+        SurahDifficulty.coefficientFor(surah, personalFrequentlyRecited: {2}),
+        SurahDifficulty.measuredCoefficient(surah),
+        reason: 'surah $surah',
+      );
+    }
+
+    // With nothing stated, the curated assumption does apply.
+    expect(SurahDifficulty.coefficientFor(18),
+        SurahDifficulty.easiestCoefficient);
   });
   test('profile choices expand Juz Amma and skipped answers retain defaults',
       () {

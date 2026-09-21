@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ComposerMetric extends StatelessWidget {
-  const ComposerMetric({super.key, 
+  const ComposerMetric({
+    super.key,
     required this.icon,
     required this.label,
     this.onTap,
@@ -17,11 +18,12 @@ class ComposerMetric extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(14),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: primary.withValues(alpha: .24)),
         ),
         child: Row(

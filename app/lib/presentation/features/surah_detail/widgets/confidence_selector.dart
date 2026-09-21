@@ -43,13 +43,14 @@ class ConfidenceSelector extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // Large emoji and text representing current selected level
+          // The face and the wording for the level currently chosen.
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                strings.assessmentEmoji(value),
-                style: const TextStyle(fontSize: 42),
+              Icon(
+                strings.assessmentFace(value),
+                size: 42,
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(width: 16),
               Column(

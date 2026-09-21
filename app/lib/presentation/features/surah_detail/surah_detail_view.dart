@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilawa/core/theme/app_theme.dart';
 import 'package:tilawa/core/localization/app_strings.dart';
+import 'package:tilawa/domain/entities/revision_section.dart';
 import 'package:tilawa/domain/entities/surah_revision.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/main_tab_provider.dart';
@@ -17,6 +18,7 @@ import 'package:tilawa/presentation/features/surah_detail/widgets/hasanat_card.d
 import 'package:tilawa/presentation/features/surah_detail/widgets/metric_row.dart';
 import 'package:tilawa/presentation/features/surah_detail/widgets/confidence_selector.dart';
 import 'package:tilawa/presentation/features/surah_detail/widgets/recitation_summary_card.dart';
+import 'package:tilawa/presentation/features/surah_detail/widgets/section_sheet.dart';
 
 class SurahDetailView extends ConsumerStatefulWidget {
   const SurahDetailView({
@@ -60,7 +62,10 @@ class _SurahDetailViewState extends ConsumerState<SurahDetailView> {
   bool _saved = false;
   final Stopwatch _stopwatch = Stopwatch();
   late int _mushafOpenCount;
-  final TextEditingController _sectionController = TextEditingController();
+
+  /// Which part of the surah was revised, as a stable key. Null when the
+  /// reciter did not say, which is the common case and a valid answer.
+  String? _section;
 
   @override
   void initState() {
@@ -74,7 +79,6 @@ class _SurahDetailViewState extends ConsumerState<SurahDetailView> {
   @override
   void dispose() {
     _stopwatch.stop();
-    _sectionController.dispose();
     super.dispose();
   }
 
@@ -180,6 +184,22 @@ class _SurahDetailViewState extends ConsumerState<SurahDetailView> {
                                   ? AppColors.amber
                                   : AppColors.emerald)),
                     ),
+                    if (RevisionSection.describe(
+                      widget.surah.lastRevisionSection,
+                      isArabic: strings.isArabic,
+                      ayahCount: widget.surah.ayahCount,
+                    ).isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      MetricRow(
+                        label: strings.lastRevisedSection,
+                        value: RevisionSection.describe(
+                          widget.surah.lastRevisionSection,
+                          isArabic: strings.isArabic,
+                          ayahCount: widget.surah.ayahCount,
+                        ),
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
                     const SizedBox(height: 10),
                     MetricRow(
                       label: strings.mistakes,
@@ -297,7 +317,28 @@ class _SurahDetailViewState extends ConsumerState<SurahDetailView> {
                     .titleLarge
                     ?.copyWith(fontWeight: FontWeight.w900),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 6),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      strings.assessmentUsageExplanation,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: muted,
+                            height: 1.4,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
               ConfidenceSelector(
                 value: _confidence,
                 onChanged: (value) {
@@ -307,21 +348,11 @@ class _SurahDetailViewState extends ConsumerState<SurahDetailView> {
                 },
               ),
               const SizedBox(height: 16),
-              TextField(
-                readOnly: _isSaving || _saved,
-                controller: _sectionController,
-                decoration: InputDecoration(
-                  labelText: strings.isArabic
-                      ? 'المقطع المراجع (اختياري)'
-                      : 'Revised Section (Optional)',
-                  hintText: strings.isArabic
-                      ? 'مثال: الآيات ١-١٠'
-                      : 'e.g. Ayahs 1-10',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.format_list_numbered_rtl),
-                ),
-                textDirection:
-                    strings.isArabic ? TextDirection.rtl : TextDirection.ltr,
+              _SectionField(
+                surah: widget.surah,
+                selected: _section,
+                enabled: !_isSaving && !_saved,
+                onChanged: (value) => setState(() => _section = value),
               ),
               const SizedBox(height: 18),
               FilledButton.icon(
@@ -407,9 +438,7 @@ class _SurahDetailViewState extends ConsumerState<SurahDetailView> {
                                 widget.surah.number,
                                 _confidence,
                                 sessionDuration.inSeconds,
-                                _sectionController.text.trim().isEmpty
-                                    ? null
-                                    : _sectionController.text.trim(),
+                                _section,
                                 _mushafOpenCount,
                               );
 
@@ -564,6 +593,87 @@ class _SurahDetailViewState extends ConsumerState<SurahDetailView> {
       subtitle: previousConfidence == null
           ? strings.firstEstimateSavedSubtitle
           : strings.revisionSavedSubtitle,
+    );
+  }
+}
+
+/// The control that opens the section sheet, showing what is currently chosen.
+class _SectionField extends ConsumerWidget {
+  const _SectionField({
+    required this.surah,
+    required this.selected,
+    required this.onChanged,
+    required this.enabled,
+  });
+
+  final SurahRevision surah;
+  final String? selected;
+  final ValueChanged<String?> onChanged;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.watch(appStringsProvider);
+    final scheme = Theme.of(context).colorScheme;
+    final chosen = RevisionSection.describe(
+      selected,
+      isArabic: strings.isArabic,
+      ayahCount: surah.ayahCount,
+    );
+
+    return InkWell(
+      onTap: enabled
+          ? () async {
+              final value = await showSectionSheet(
+                context,
+                strings: strings,
+                ayahCount: surah.ayahCount,
+                selected: selected,
+              );
+              onChanged(value);
+            }
+          : null,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: scheme.outline),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.format_list_numbered_rtl, color: scheme.primary),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    strings.revisedSectionOptional,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: scheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  Text(
+                    chosen.isEmpty ? strings.chooseSection : chosen,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: chosen.isEmpty
+                          ? scheme.onSurface.withValues(alpha: 0.5)
+                          : scheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.expand_more_rounded, color: scheme.primary),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -8,7 +8,6 @@ import 'package:tilawa/presentation/widgets/active_revision_card.dart';
 import 'package:tilawa/presentation/widgets/reminder_banner.dart';
 import 'package:tilawa/presentation/widgets/status_bar.dart';
 import 'package:tilawa/presentation/widgets/tarteel_surah_navigator.dart';
-import 'package:tilawa/presentation/widgets/responsive_pair.dart';
 import 'package:tilawa/recitation/presentation/live_recitation_view.dart';
 import 'package:tilawa/presentation/features/home/widgets/quran_completion_card.dart';
 import 'package:tilawa/presentation/features/home/widgets/daily_wisdom_card.dart';
@@ -71,9 +70,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  ResponsivePair(
-                      first: QuranCompletionCard(surahs: surahs),
-                      second: const DailyGoalProgressCard()),
+                  // Full width: it is a progress bar, and it carries its own
+                  // bottom spacing so the dashboard does not gap on the days
+                  // it hides itself.
+                  const QuranCompletionCard(),
+                  const DailyGoalProgressCard(),
                   const SizedBox(height: 16),
                   const DailyWisdomCard(),
                   const SizedBox(height: 18),
@@ -137,14 +138,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                             style: const TextStyle(fontSize: 12)),
                       ),
                     ),
-                  const SizedBox(height: 8),
-                  Text(
-                    strings.quranDataNotice,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                  ),
                 ],
               ),
             ),

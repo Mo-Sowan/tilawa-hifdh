@@ -20,18 +20,16 @@ class HeatLegend extends StatelessWidget {
       children: [
         Text(strings.heatmapLess, style: style),
         const SizedBox(width: 6),
-        for (final opacity in HeatCell.tierOpacity)
+        for (var tier = 0; tier < HeatCell.tierOpacity.length; tier++)
           Container(
             width: 12,
             height: 12,
             margin: const EdgeInsets.symmetric(horizontal: 2),
             decoration: BoxDecoration(
-              color: opacity == 0
-                  ? scheme.surfaceContainerHighest
-                  : scheme.primary.withValues(alpha: opacity),
+              color: HeatCell.fillFor(context, tier),
               borderRadius: BorderRadius.circular(3),
               border: Border.all(
-                color: opacity == 0
+                color: tier == 0
                     ? scheme.outline
                     : scheme.primary.withValues(alpha: .45),
               ),

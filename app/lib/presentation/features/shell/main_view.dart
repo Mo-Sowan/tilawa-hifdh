@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/daily_progress_provider.dart';
 import 'package:tilawa/presentation/providers/revision_providers.dart';
-import 'package:tilawa/presentation/widgets/streak_celebration_dialog.dart';
+import 'package:tilawa/presentation/widgets/celebration/celebration_sheet.dart';
+import 'package:tilawa/presentation/widgets/celebration/celebration_tier.dart';
 import 'package:tilawa/services/notification_service.dart';
 import 'package:tilawa/presentation/features/home/home_view.dart';
 import 'package:tilawa/presentation/features/plan/plan_view.dart';
@@ -83,10 +84,14 @@ class _MainViewState extends ConsumerState<MainView>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      unawaited(showStreakCelebration(
+      final strings = ref.read(appStringsProvider);
+      unawaited(showCelebration(
         context,
-        streak: streak > 0 ? streak : 1,
-        strings: ref.read(appStringsProvider),
+        tier: CelebrationTier.dailyStreak,
+        title: strings.streakCelebrationTitle(streak > 0 ? streak : 1),
+        body: strings.streakCelebrationBody,
+        strings: strings,
+        withSound: ref.read(appSettingsProvider).celebrationSoundEnabled,
       ));
     });
   }

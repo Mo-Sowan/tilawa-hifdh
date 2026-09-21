@@ -90,9 +90,10 @@ class SessionLogCard extends ConsumerWidget {
                     ),
                     child: Row(
                       children: [
-                        Text(
-                          strings.assessmentEmoji(session.confidence),
-                          style: const TextStyle(fontSize: 22),
+                        Icon(
+                          strings.assessmentFace(session.confidence),
+                          size: 22,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(width: 12),
                         Expanded(

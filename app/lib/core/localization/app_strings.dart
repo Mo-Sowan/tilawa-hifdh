@@ -1,5 +1,6 @@
 import 'dart:math';
-import 'package:flutter/widgets.dart';
+
+import 'package:flutter/material.dart';
 
 enum AppLanguage {
   english(Locale('en', 'US'), TextDirection.ltr),
@@ -161,8 +162,8 @@ class AppStrings {
   // Home Screen
   String get continueLabel => isArabic ? 'متابعة' : 'Continue';
   String streakCelebrationTitle(int days) => isArabic
-      ? '🔥 سلسلة $days ${days == 1 ? 'يوم' : 'أيام'}!'
-      : '🔥 $days-Day Streak!';
+      ? 'سلسلة $days ${days == 1 ? 'يوم' : 'أيام'}!'
+      : '$days-Day Streak!';
   String get streakCelebrationBody => isArabic
       ? 'أتممت هدف اليوم. عُد غداً لتُبقي السلسلة حيّة.'
       : "You've hit today's target. Come back tomorrow to keep it alive.";
@@ -173,6 +174,37 @@ class AppStrings {
   String exitReminder(int done, int left) => isArabic
       ? 'أتممت $done٪ من مراجعة اليوم — بقي $left٪ فقط لتبلغ هدفك!'
       : "You've completed $done% of today's revision — only $left% left to reach your goal!";
+  String get quranCoverageTitle =>
+      isArabic ? 'ما راجعته من القرآن' : 'How much of the Quran';
+  String surahsRevisedOf(int done, int total) => isArabic
+      ? 'راجعت $done من $total سورة'
+      : '$done of $total surahs revised';
+  String pagesRevisedOf(int done, int total, int percent) => isArabic
+      ? 'أي $done صفحة من $total — $percent٪ من المصحف'
+      : 'that is $done of $total pages - $percent% of the Mushaf';
+  String get customAyahRange =>
+      isArabic ? 'أو حدد الآيات' : 'Or choose the ayahs';
+  String get fromAyah => isArabic ? 'من آية' : 'From ayah';
+  String get toAyah => isArabic ? 'إلى آية' : 'To ayah';
+  String get useThisRange => isArabic ? 'استخدم هذا المدى' : 'Use this range';
+  String get clearSelection => isArabic ? 'بدون تحديد' : 'Not recorded';
+  String get chooseSection => isArabic ? 'اختر المقطع' : 'Choose a section';
+  String get ayahRangeIncomplete =>
+      isArabic ? 'أدخل رقمي البداية والنهاية.' : 'Enter both ayah numbers.';
+  String ayahRangeOutOfBounds(int ayahCount) => isArabic
+      ? 'المدى يجب أن يقع بين ١ و $ayahCount.'
+      : 'The range must fall between 1 and $ayahCount.';
+  String get lastRevisedSection =>
+      isArabic ? 'آخر مقطع راجعته' : 'Last section revised';
+  String get revisedSectionOptional =>
+      isArabic ? 'المقطع المراجع (اختياري)' : 'Revised section (optional)';
+  String get assessmentUsageExplanation => isArabic
+      ? 'نستخدم تقييمك لتحديث درجة الإتقان وترتيب السور التي تحتاج مراجعة. ونحفظ المقطع لتعرف أين توقفت آخر مرة.'
+      : 'Your rating updates mastery and helps prioritize what needs revision. The section is saved so you can see where you stopped last time.';
+  String get startReciting => isArabic ? 'ابدأ التسميع' : 'Start reciting';
+  String get planDoneForToday => isArabic
+      ? 'أتممت خطة اليوم. بارك الله فيك.'
+      : "Today's plan is done. Well done.";
   String get planProgressTitle => isArabic ? 'خطة اليوم' : "Today's plan";
   String planProgress(int done, int total) => isArabic
       ? 'راجعت $done من $total سورة'
@@ -233,6 +265,11 @@ class AppStrings {
   // Live recitation reveal
   String get revealShow => isArabic ? 'إظهار النص' : 'Show the text';
   String get revealHide => isArabic ? 'إخفاء النص' : 'Hide the text';
+  String get previousPage => isArabic ? 'الصفحة السابقة' : 'Previous page';
+  String get nextPage => isArabic ? 'الصفحة التالية' : 'Next page';
+  String pageOf(int mushafPage, int position, int total) => isArabic
+      ? 'صفحة $mushafPage · $position من $total'
+      : 'Page $mushafPage · $position of $total';
   String get tapWordToPeek => isArabic
       ? 'انقر أي كلمة لكشفها، أو رقم الآية لكشف الآية'
       : 'Tap a word to uncover it, or an ayah number for the whole ayah';
@@ -376,16 +413,16 @@ class AppStrings {
 
   String get planCreatedTitle {
     final optionsAr = [
-      'بسم الله، وُفِّقت! 🌟',
-      'خطة مباركة! ✨',
-      'بداية موفقة! 🎯',
-      'توكلنا على الله! 🚀'
+      'بسم الله، وُفِّقت!',
+      'خطة مباركة!',
+      'بداية موفقة!',
+      'توكلنا على الله!'
     ];
     final optionsEn = [
-      'Plan Created! 🌟',
-      'Great Start! ✨',
-      'Ready, Set, Go! 🎯',
-      'Bismillah, Let\'s go! 🚀'
+      'Plan Created!',
+      'Great Start!',
+      'Ready, Set, Go!',
+      'Bismillah, Let\'s go!'
     ];
     return isArabic
         ? optionsAr[_random.nextInt(optionsAr.length)]
@@ -412,16 +449,16 @@ class AppStrings {
 
   String get revisionSavedTitle {
     final optionsAr = [
-      'بارك الله في حفظك ✨',
-      'أحسنت صنعاً! 🌟',
-      'مراجعة ممتازة! 💎',
-      'ما شاء الله تبارك الله! 🌺'
+      'بارك الله في حفظك',
+      'أحسنت صنعاً!',
+      'مراجعة ممتازة!',
+      'ما شاء الله تبارك الله!'
     ];
     final optionsEn = [
-      'Assessment Saved! ✨',
-      'Great Job! 🌟',
-      'Excellent Revision! 💎',
-      'MashaAllah! 🌺'
+      'Assessment Saved!',
+      'Great Job!',
+      'Excellent Revision!',
+      'MashaAllah!'
     ];
     return isArabic
         ? optionsAr[_random.nextInt(optionsAr.length)]
@@ -449,13 +486,13 @@ class AppStrings {
   String get scoreDropTitle {
     final optionsAr = [
       'لا تيأس، فإن مع العسر يسرًا',
-      'فرصة للتحسين 💪',
+      'فرصة للتحسين',
       'المراجعة القادمة ستكون أفضل',
       'لا بأس، هذا جزء من التعلم'
     ];
     final optionsEn = [
       "Don't give up! Ease follows hardship.",
-      'Room for Improvement 💪',
+      'Room for Improvement',
       'You will do better next time.',
       'It\'s okay, learning is a process.'
     ];
@@ -521,9 +558,26 @@ class AppStrings {
     }
   }
 
-  String assessmentEmoji(int level) {
-    const emojis = ['😶', '😟', '😕', '🤔', '😐', '🙂', '😊', '😃', '🌟', '💎'];
-    return emojis[(level - 1).clamp(0, 9)];
+  /// The face for a confidence level, as a Material icon.
+  ///
+  /// Not an emoji. A colour emoji needs a font the app does not bundle, so on
+  /// the web CanvasKit fetches one the first time one is drawn — which is why
+  /// these appeared a moment late. Material icons are already in the bundle
+  /// and paint immediately.
+  IconData assessmentFace(int level) {
+    const faces = [
+      Icons.sentiment_very_dissatisfied_rounded,
+      Icons.sentiment_very_dissatisfied_rounded,
+      Icons.sentiment_dissatisfied_rounded,
+      Icons.sentiment_dissatisfied_rounded,
+      Icons.sentiment_neutral_rounded,
+      Icons.sentiment_satisfied_rounded,
+      Icons.sentiment_satisfied_alt_rounded,
+      Icons.sentiment_very_satisfied_rounded,
+      Icons.star_rounded,
+      Icons.workspace_premium_rounded,
+    ];
+    return faces[(level - 1).clamp(0, 9)];
   }
 
   // Timer
@@ -583,7 +637,7 @@ class AppStrings {
       ? 'تم حفظ أول تقييم لهذه السورة. من هنا يبدأ قياس التحسن.'
       : 'First estimate saved for this Surah. Now your improvement has a baseline.';
   String get planCompletedTitle =>
-      isArabic ? 'اكتملت الخطة! 🎉' : 'Plan Completed! 🎉';
+      isArabic ? 'اكتملت الخطة!' : 'Plan Completed!';
   String get planCompletedSubtitle => isArabic
       ? 'ما شاء الله، لقد أتممت مراجعة جميع السور المخطط لها اليوم بنجاح.'
       : 'MashaAllah, you have successfully revised all planned Surahs for today.';

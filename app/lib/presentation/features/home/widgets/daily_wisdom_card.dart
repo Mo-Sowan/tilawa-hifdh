@@ -220,7 +220,7 @@ class DailyWisdomCardState extends ConsumerState<DailyWisdomCard> {
               // A sparkle, not a reload: this offers another saying rather
               // than fetching the same one again.
               icon: Icon(
-                Icons.auto_awesome_rounded,
+                Icons.format_quote_rounded,
                 size: 20,
                 color: scheme.primary,
               ),

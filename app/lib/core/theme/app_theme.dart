@@ -12,6 +12,17 @@ class AppColors {
   static const amber = Color(0xFFFFB300);
   static const blue = Color(0xFF2196F3);
   static const rose = Color(0xFFFF5C7A);
+
+  /// The streak flame, from a new streak to a long one.
+  ///
+  /// Deliberately not [rose]: that is the theme's error colour and the colour
+  /// of a weak surah, so painting the reciter's best achievement in it said
+  /// the opposite of what was meant. A flame should also be hot, and pink is
+  /// not. [AppTheme.streakColour] interpolates these by streak length, so a
+  /// long run looks visibly different from a new one.
+  static const streakCool = Color(0xFFFFC145);
+  static const streakWarm = Color(0xFFFF8A2B);
+  static const streakHot = Color(0xFFE2451E);
   static const purple = Color(0xFFB388FF);
   static const cyan = Color(0xFF18FFFF);
   static const orange = Color(0xFFFF8A65);
@@ -347,6 +358,19 @@ class AppTheme {
       fontWeight: weight,
       letterSpacing: 0,
     );
+  }
+
+  /// Saturation point for the streak flame. Past about six weeks the habit is
+  /// established and further gradation stops meaning anything.
+  static const int streakFullHeat = 40;
+
+  /// The flame colour for a streak of [days].
+  static Color streakColour(int days) {
+    if (days <= 0) return AppColors.streakCool;
+    final t = (days / streakFullHeat).clamp(0.0, 1.0);
+    return t < 0.5
+        ? Color.lerp(AppColors.streakCool, AppColors.streakWarm, t * 2)!
+        : Color.lerp(AppColors.streakWarm, AppColors.streakHot, (t - 0.5) * 2)!;
   }
 
   /// Style for Arabic display text such as surah names.

@@ -221,14 +221,14 @@ void main() {
       required Duration ago,
       int streak = 1,
     }) {
-      // Aal-Imran carries no difficulty adjustment, so these assertions test
-      // the base decay curve rather than a coefficient. SurahDifficulty has
-      // its own group below.
+      // Maryam sits in the middle tier and is not habitually recited, so it
+      // carries no adjustment either way: these assertions test the base decay
+      // curve rather than a coefficient. SurahDifficulty has its own group.
       return SurahRevision(
-        number: 3,
-        englishName: 'Aal-Imran',
-        arabicName: 'آل عمران',
-        juzNumber: 3,
+        number: 19,
+        englishName: 'Maryam',
+        arabicName: 'مريم',
+        juzNumber: 16,
         ayahCount: 4,
         masteryAtReview: masteryAtReview,
         mistakeRate: 0,
@@ -271,35 +271,72 @@ void main() {
   });
 
   group('SurahDifficulty', () {
-    test('the long mutashabihat surahs fade faster', () {
+    // This is the claim that replaced a hand-written "hard surahs" list: the
+    // four every hafiz names are found by measuring the text, not by being
+    // typed in. If the generator ever stops reproducing them, this fails.
+    test('measurement alone puts the long mutashabihat surahs in the top tier',
+        () {
       for (final surah in const [2, 4, 5, 6]) {
+        expect(SurahDifficulty.measuredTier(surah),
+            SurahDifficulty.tierCoefficients.length - 1,
+            reason: 'surah $surah');
         expect(SurahDifficulty.coefficientFor(surah),
-            SurahDifficulty.hardCoefficient);
+            SurahDifficulty.hardestCoefficient);
         expect(SurahDifficulty.isHard(surah), isTrue);
       }
     });
 
-    test('the habitually recited surahs hold longer', () {
-      for (final surah in const [18, 36, 67, 78, 100, 114]) {
+    test('every surah has a tier, and tiers are ordered', () {
+      for (var surah = 1; surah <= 114; surah++) {
+        final tier = SurahDifficulty.measuredTier(surah);
+        expect(tier, inInclusiveRange(0, 4), reason: 'surah $surah');
+      }
+      // Lower tier means it holds longer.
+      for (var tier = 1; tier < SurahDifficulty.tierCoefficients.length; tier++) {
+        expect(SurahDifficulty.tierCoefficients[tier],
+            greaterThan(SurahDifficulty.tierCoefficients[tier - 1]));
+      }
+    });
+
+    test('the habitually recited surahs hold longest', () {
+      for (final surah in const [1, 18, 36, 67, 78, 100, 114]) {
         expect(SurahDifficulty.coefficientFor(surah),
-            SurahDifficulty.easyCoefficient);
+            SurahDifficulty.easiestCoefficient);
         expect(SurahDifficulty.isFrequentlyRecited(surah), isTrue);
       }
     });
 
-    test('everything else is left alone', () {
-      for (final surah in const [1, 3, 10, 50, 77]) {
-        expect(SurahDifficulty.coefficientFor(surah),
+    // Al-Kahf, Yaseen and Al-Mulk measure as unremarkable text. They are easy
+    // because of when they are recited, not because of how they read — which
+    // is exactly what the curated layer is for.
+    test('the curated layer overrides what the text alone would say', () {
+      for (final surah in const [18, 36, 67]) {
+        expect(SurahDifficulty.measuredCoefficient(surah),
             SurahDifficulty.neutralCoefficient);
+        expect(SurahDifficulty.coefficientFor(surah),
+            SurahDifficulty.easiestCoefficient);
       }
+    });
+
+    test('stated habits replace the assumption about people in general', () {
+      // Told that this reciter reads Al-Baqarah often, it stops fading fast.
+      expect(
+        SurahDifficulty.coefficientFor(2, personalFrequentlyRecited: const {2}),
+        SurahDifficulty.easiestCoefficient,
+      );
+      // And Al-Kahf loses its curated easiness for someone who never reads it.
+      expect(
+        SurahDifficulty.coefficientFor(18, personalFrequentlyRecited: const {2}),
+        SurahDifficulty.measuredCoefficient(18),
+      );
     });
 
     test('a hard surah halves sooner than a neutral one', () {
       final hard = MasteryModel.halfLifeDays(1,
-          decayCoefficient: SurahDifficulty.hardCoefficient);
+          decayCoefficient: SurahDifficulty.hardestCoefficient);
       final neutral = MasteryModel.halfLifeDays(1);
       final easy = MasteryModel.halfLifeDays(1,
-          decayCoefficient: SurahDifficulty.easyCoefficient);
+          decayCoefficient: SurahDifficulty.easiestCoefficient);
 
       expect(hard, lessThan(neutral));
       expect(easy, greaterThan(neutral));
@@ -322,7 +359,7 @@ void main() {
 
       final baqarah = masteryFor(2);
       final naba = masteryFor(78);
-      final neutral = masteryFor(3);
+      final neutral = masteryFor(19);
 
       expect(baqarah, lessThan(neutral));
       expect(neutral, lessThan(naba));

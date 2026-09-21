@@ -1,46 +1,52 @@
+import 'package:tilawa/domain/entities/surah_difficulty_table.dart';
+
 /// How fast a surah fades, relative to an average one.
 ///
-/// Not every surah is held the same way. Two things move the needle, and they
-/// pull in opposite directions:
+/// Three layers, each overriding the one before:
 ///
-/// * **Length and *mutashabihat*.** The long Madani surahs repeat near-identical
-///   passages with small differences in wording and order, which is precisely
-///   what memory blurs first. Huffaz consistently name Al-Baqarah, An-Nisa,
-///   Al-Ma'idah and Al-An'am as the ones that slip fastest.
-/// * **Habitual recitation.** Al-Kahf on Fridays, Al-Mulk before sleep, Yaseen,
-///   and the short surahs of Juz Amma in daily prayer are all rehearsed without
-///   anyone calling it revision, so they hold far longer than the schedule
-///   would otherwise assume.
+/// 1. **Measured.** Every surah is scored from the text itself — bulk, mean
+///    verse length, and the share of five-word runs that recur elsewhere in the
+///    Quran, which is the *mutashabihat* that make a hafiz lose their place.
+///    `tools/build_surah_difficulty.py` does the measuring and writes
+///    [SurahDifficultyTable]; the evidence for each surah is in a comment on
+///    its row.
+/// 2. **Curated.** A few surahs stand apart for reasons the text cannot show.
+///    Al-Fatiha is recited in every unit of every prayer; Al-Kahf on Fridays,
+///    Al-Mulk before sleep, Yaseen and the short surahs of Juz Amma are all
+///    rehearsed constantly without anyone calling it revision. Measurement puts
+///    Al-Kahf, Yaseen and Al-Mulk in the middle tier, which is right about the
+///    text and wrong about the person.
+/// 3. **Personal.** What the reciter says they actually recite beats any
+///    assumption about what people in general recite.
 ///
 /// The coefficient divides the half-life: above 1 the surah halves sooner and
-/// comes back around for revision more often; below 1 it holds longer and the
-/// plan leaves it alone. An unlisted surah is 1.0 and behaves exactly as
-/// before, so this only ever adjusts the cases there is a reason to adjust.
+/// comes round for revision more often; below 1 it holds longer.
 ///
-/// The API applies the same table in `SurahDifficulty.cs`. The two must stay in
+/// No curated "hard" list is kept. Measurement reproduces the four surahs that
+/// used to be listed by hand — Al-Baqarah, An-Nisa, Al-Ma'idah and Al-An'am all
+/// land in the top tier on their own — so listing them again would be data
+/// duplicated in two places. A test asserts it instead, which is where a claim
+/// like that belongs.
+///
+/// The API applies the same rules in `SurahDifficulty.cs`. The two must stay in
 /// step — change one, change the other, and update both test suites.
 class SurahDifficulty {
   const SurahDifficulty._();
 
-  /// The default: no adjustment either way.
+  /// Tier coefficients, from the surah that holds longest to the one that
+  /// fades fastest. Indexed by [SurahDifficultyTable.tierBySurah].
+  static const List<double> tierCoefficients = [0.5, 0.75, 1.0, 1.25, 1.5];
+
+  /// The tier a surah falls in when nothing is known about it.
+  static const int defaultTier = 2;
+
+  static const double easiestCoefficient = 0.5;
   static const double neutralCoefficient = 1.0;
+  static const double hardestCoefficient = 1.5;
 
-  /// Long, and dense with near-repeated passages.
-  static const double hardCoefficient = 1.5;
-
-  /// Recited often enough to be rehearsed outside revision.
-  static const double easyCoefficient = 0.5;
-
-  /// Surahs that fade fastest: length plus *mutashabihat*.
-  static const Set<int> hardSurahs = {
-    2, // Al-Baqarah
-    4, // An-Nisa
-    5, // Al-Ma'idah
-    6, // Al-An'am
-  };
-
-  /// Surahs carried by habit outside of revision.
+  /// Surahs carried by habit rather than by revision.
   static const Set<int> frequentlyRecitedSurahs = {
+    1, // Al-Fatiha — every rak'ah of every prayer
     18, // Al-Kahf — Fridays
     36, // Yaseen
     67, // Al-Mulk — before sleep
@@ -50,23 +56,37 @@ class SurahDifficulty {
   static const int juzAmmaFirstSurah = 78;
   static const int juzAmmaLastSurah = 114;
 
+  /// The tier this surah's text alone puts it in.
+  static int measuredTier(int surahNumber) =>
+      SurahDifficultyTable.tierBySurah[surahNumber] ?? defaultTier;
+
+  /// What the text alone says, before any habit is taken into account.
+  static double measuredCoefficient(int surahNumber) =>
+      tierCoefficients[measuredTier(surahNumber)];
+
+  /// Whether this surah is one the population at large rehearses anyway.
+  static bool isHabituallyRecited(int surahNumber) =>
+      frequentlyRecitedSurahs.contains(surahNumber) ||
+      (surahNumber >= juzAmmaFirstSurah && surahNumber <= juzAmmaLastSurah);
+
   /// The multiplier applied to this surah's decay rate.
-  static double coefficientFor(int surahNumber,
-      {Set<int>? personalFrequentlyRecited}) {
+  ///
+  /// Once the reciter has told us what they actually recite, that replaces the
+  /// assumption about what people in general recite — including for surahs on
+  /// the curated list. Someone who never opens Al-Kahf on a Friday should not
+  /// have the app quietly assume they do.
+  static double coefficientFor(
+    int surahNumber, {
+    Set<int>? personalFrequentlyRecited,
+  }) {
     if (personalFrequentlyRecited != null) {
-      if (personalFrequentlyRecited.contains(surahNumber)) {
-        return easyCoefficient;
-      }
-      return hardSurahs.contains(surahNumber)
-          ? hardCoefficient
-          : neutralCoefficient;
+      return personalFrequentlyRecited.contains(surahNumber)
+          ? easiestCoefficient
+          : measuredCoefficient(surahNumber);
     }
-    if (hardSurahs.contains(surahNumber)) return hardCoefficient;
-    if (frequentlyRecitedSurahs.contains(surahNumber)) return easyCoefficient;
-    if (surahNumber >= juzAmmaFirstSurah && surahNumber <= juzAmmaLastSurah) {
-      return easyCoefficient;
-    }
-    return neutralCoefficient;
+    return isHabituallyRecited(surahNumber)
+        ? easiestCoefficient
+        : measuredCoefficient(surahNumber);
   }
 
   /// Whether this surah decays faster than average.

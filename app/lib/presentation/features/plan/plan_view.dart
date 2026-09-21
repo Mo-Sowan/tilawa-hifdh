@@ -60,99 +60,112 @@ class _PlanViewState extends ConsumerState<PlanView> {
     final muted = isDark ? AppColors.textMuted : AppColors.lightTextMuted;
 
     return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 14, 20, 28),
+      // The button is pinned rather than moved up the page. Putting it above
+      // the picker would invite pressing "create" before choosing anything;
+      // leaving it at the bottom of a 114-surah list made it unreachable.
+      child: Column(
         children: [
-          Text(
-            strings.planRevision,
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium
-                ?.copyWith(fontWeight: FontWeight.w900),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            strings.planHint,
-            style:
-                Theme.of(context).textTheme.bodySmall?.copyWith(color: muted),
-          ),
-          const SizedBox(height: 18),
-          _PlanHowItWorks(strings: strings),
-          const SizedBox(height: 24),
-          Text(
-            strings.activePlans,
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(fontWeight: FontWeight.w900),
-          ),
-          const SizedBox(height: 12),
-          plans.when(
-            data: (items) => Column(
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
               children: [
-                if (items.isEmpty)
-                  EmptyPlanCard(message: strings.noPlanYet)
-                else
-                  for (final plan in items) ...[
-                    ExistingPlanCard(plan: plan),
-                    const SizedBox(height: 10),
-                  ],
+                Text(
+                  strings.planRevision,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  strings.planHint,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: muted),
+                ),
+                const SizedBox(height: 18),
+                _PlanHowItWorks(strings: strings),
+                const SizedBox(height: 24),
+                Text(
+                  strings.activePlans,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 12),
+                plans.when(
+                  data: (items) => Column(
+                    children: [
+                      if (items.isEmpty)
+                        EmptyPlanCard(message: strings.noPlanYet)
+                      else
+                        for (final plan in items) ...[
+                          ExistingPlanCard(plan: plan),
+                          const SizedBox(height: 10),
+                        ],
+                    ],
+                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (error, _) => Text('Unable to load plans: $error'),
+                ),
+                const SizedBox(height: 28),
+                Text(
+                  strings.createNewPlan,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 12),
+                PlanComposer(
+                  nameController: _nameController,
+                  selectedSurahs: _selectedSurahs,
+                  reminderTime: _reminderTime,
+                  onReminderChanged: (value) =>
+                      setState(() => _reminderTime = value),
+                  onShowSelected: () => setState(() => _showSelectedRequest++),
+                ),
+                const SizedBox(height: 20),
+                _PlanStepHeading(
+                  number: 2,
+                  title: strings.choosePlanSurahs,
+                  subtitle: strings.isArabic
+                      ? '${_selectedSurahs.length} من $maxSurahs مختارة. يمكنك تعديل الاختيار المقترح.'
+                      : '${_selectedSurahs.length} of $maxSurahs selected. You can change the suggestion.',
+                ),
+                const SizedBox(height: 12),
+                overview.when(
+                  data: (surahs) => SurahPicker(
+                    surahs: surahs,
+                    selected: _selectedSurahs,
+                    showSelectedRequest: _showSelectedRequest,
+                    onToggle: (number) {
+                      _defaultsApplied = true;
+                      if (!_selectedSurahs.contains(number) &&
+                          _selectedSurahs.length >= maxSurahs) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(strings.isArabic
+                                ? 'الحد الأقصى لهذه الخطة $maxSurahs سور'
+                                : 'This plan can contain up to $maxSurahs surahs.')));
+                        return;
+                      }
+                      setState(() {
+                        if (!_selectedSurahs.add(number)) {
+                          _selectedSurahs.remove(number);
+                        }
+                      });
+                    },
+                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (error, _) => Text('Error: $error'),
+                ),
               ],
             ),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Text('Unable to load plans: $error'),
           ),
-          const SizedBox(height: 28),
-          Text(
-            strings.createNewPlan,
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(fontWeight: FontWeight.w900),
-          ),
-          const SizedBox(height: 12),
-          PlanComposer(
-            nameController: _nameController,
-            selectedSurahs: _selectedSurahs,
-            reminderTime: _reminderTime,
-            onReminderChanged: (value) => setState(() => _reminderTime = value),
-            onShowSelected: () => setState(() => _showSelectedRequest++),
-          ),
-          const SizedBox(height: 20),
-          _PlanStepHeading(
-            number: 2,
-            title: strings.choosePlanSurahs,
-            subtitle: strings.isArabic
-                ? '${_selectedSurahs.length} من $maxSurahs مختارة. يمكنك تعديل الاختيار المقترح.'
-                : '${_selectedSurahs.length} of $maxSurahs selected. You can change the suggestion.',
-          ),
-          const SizedBox(height: 12),
-          overview.when(
-            data: (surahs) => SurahPicker(
-              surahs: surahs,
-              selected: _selectedSurahs,
-              showSelectedRequest: _showSelectedRequest,
-              onToggle: (number) {
-                _defaultsApplied = true;
-                if (!_selectedSurahs.contains(number) &&
-                    _selectedSurahs.length >= maxSurahs) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(strings.isArabic
-                          ? 'الحد الأقصى لهذه الخطة $maxSurahs سور'
-                          : 'This plan can contain up to $maxSurahs surahs.')));
-                  return;
-                }
-                setState(() {
-                  if (!_selectedSurahs.add(number)) {
-                    _selectedSurahs.remove(number);
-                  }
-                });
-              },
-            ),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Text('Error: $error'),
-          ),
-          const SizedBox(height: 20),
           _CreatePlanFooter(
             selectedCount: _selectedSurahs.length,
             title: strings.planReadyToCreate,

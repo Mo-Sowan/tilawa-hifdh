@@ -42,13 +42,14 @@ class _LiveRecitationViewState extends ConsumerState<LiveRecitationView>
   bool _isPaused = false;
   bool _isFinishing = false;
 
-  /// The Quran text is shown by default.
+  /// The text starts covered.
   ///
-  /// Covering every word is the right tool for testing recall of something
-  /// already memorised, but it makes the screen useless for anything else —
-  /// a page of grey slabs is not a Quran. The eye in the title bar still
-  /// covers the words for anyone who wants to be tested.
-  bool _revealed = true;
+  /// This screen exists to find out what the reciter can recall, and text on
+  /// screen answers the question for them. The eye in the title bar uncovers
+  /// the page they are on, and turning to the next page covers it again — so
+  /// looking is a deliberate act, page by page, rather than a switch that ends
+  /// the test for the whole surah.
+  bool _revealed = false;
   int _mushafOpenCount = 0;
 
   late final AnimationController _entranceController;
@@ -265,8 +266,9 @@ class _LiveRecitationViewState extends ConsumerState<LiveRecitationView>
                       child: MemoryText(
                         surah: widget.surah,
                         session: session,
-                        revealAll: _revealed,
-                        fontSize: ref.watch(appSettingsProvider).quranFontSize,
+                        revealed: _revealed,
+                        onRevealConsumed: () =>
+                            setState(() => _revealed = false),
                       ),
                     ),
                   ),

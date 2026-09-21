@@ -6,6 +6,7 @@ import 'package:tilawa/domain/entities/revision_plan.dart';
 import 'package:tilawa/domain/entities/surah_revision.dart';
 import 'package:tilawa/presentation/providers/app_settings_provider.dart';
 import 'package:tilawa/presentation/providers/revision_providers.dart';
+import 'package:tilawa/presentation/features/plan/widgets/start_reciting_button.dart';
 import 'package:tilawa/presentation/widgets/tarteel_surah_navigator.dart';
 import 'package:tilawa/recitation/presentation/live_recitation_view.dart';
 
@@ -68,6 +69,11 @@ class PlanDetailView extends ConsumerWidget {
                     total: planSurahs.length,
                     strings: strings,
                   ),
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: StartRecitingButton(plan: plan),
                 ),
                 const SizedBox(height: 20),
                 TarteelSurahNavigator(

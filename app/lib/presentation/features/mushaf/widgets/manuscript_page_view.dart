@@ -10,7 +10,8 @@ import 'package:tilawa/presentation/widgets/mushaf_annotation_overlay.dart';
 import 'package:tilawa/presentation/widgets/mushaf_page_image.dart';
 
 class ManuscriptPageView extends ConsumerWidget {
-  const ManuscriptPageView({super.key, 
+  const ManuscriptPageView({
+    super.key,
     required this.pageController,
     required this.isDark,
     required this.onPageChanged,
@@ -25,78 +26,84 @@ class ManuscriptPageView extends ConsumerWidget {
     final strings = ref.watch(appStringsProvider);
     final baseUrl = ref.watch(apiClientProvider).baseUrl;
 
-    return PageView.builder(
-      controller: pageController,
-      reverse: true,
-      itemCount: 603,
-      onPageChanged: onPageChanged,
-      itemBuilder: (context, index) {
-        final pageNumber = index + 1;
-        final actualPageNumber = pageNumber + 1;
-        final mapping = ref.watch(mushafPageMappingProvider(actualPageNumber));
-        final annotations =
-            ref.watch(ayahAnnotationsForPageProvider(actualPageNumber));
+    // A Mushaf always turns right-to-left, regardless of whether the app's
+    // interface is currently English or Arabic. Inheriting Directionality
+    // made the same gesture mean opposite things after changing language.
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: PageView.builder(
+        controller: pageController,
+        itemCount: 603,
+        onPageChanged: onPageChanged,
+        itemBuilder: (context, index) {
+          final pageNumber = index + 1;
+          final actualPageNumber = pageNumber + 1;
+          final mapping =
+              ref.watch(mushafPageMappingProvider(actualPageNumber));
+          final annotations =
+              ref.watch(ayahAnnotationsForPageProvider(actualPageNumber));
 
-        return InteractiveViewer(
-          minScale: 1.0,
-          maxScale: 4.0,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Center(
-                child: ColorFiltered(
-                  colorFilter: isDark
-                      ? const ColorFilter.matrix([
-                          -1,
-                          0,
-                          0,
-                          0,
-                          255,
-                          0,
-                          -1,
-                          0,
-                          0,
-                          255,
-                          0,
-                          0,
-                          -1,
-                          0,
-                          255,
-                          0,
-                          0,
-                          0,
-                          1,
-                          0,
-                        ])
-                      : const ColorFilter.mode(
-                          Colors.transparent,
-                          BlendMode.multiply,
-                        ),
-                  child: MushafPageImage(
-                    pageNumber: actualPageNumber,
-                    apiBaseUrl: baseUrl,
-                    errorLabel: '${strings.loadPageError} $pageNumber',
+          return InteractiveViewer(
+            minScale: 1.0,
+            maxScale: 4.0,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Center(
+                  child: ColorFiltered(
+                    colorFilter: isDark
+                        ? const ColorFilter.matrix([
+                            -1,
+                            0,
+                            0,
+                            0,
+                            255,
+                            0,
+                            -1,
+                            0,
+                            0,
+                            255,
+                            0,
+                            0,
+                            -1,
+                            0,
+                            255,
+                            0,
+                            0,
+                            0,
+                            1,
+                            0,
+                          ])
+                        : const ColorFilter.mode(
+                            Colors.transparent,
+                            BlendMode.multiply,
+                          ),
+                    child: MushafPageImage(
+                      pageNumber: actualPageNumber,
+                      apiBaseUrl: baseUrl,
+                      errorLabel: '${strings.loadPageError} $pageNumber',
+                    ),
                   ),
                 ),
-              ),
-              mapping.when(
-                data: (pageMapping) => annotations.when(
-                  data: (pageAnnotations) => MushafAnnotationOverlay(
-                    mapping: pageMapping,
-                    annotations: pageAnnotations,
-                    onAyahSelected: (region) =>
-                        _showAyahActionSheet(context, ref, region),
+                mapping.when(
+                  data: (pageMapping) => annotations.when(
+                    data: (pageAnnotations) => MushafAnnotationOverlay(
+                      mapping: pageMapping,
+                      annotations: pageAnnotations,
+                      onAyahSelected: (region) =>
+                          _showAyahActionSheet(context, ref, region),
+                    ),
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
                   ),
                   loading: () => const SizedBox.shrink(),
                   error: (_, __) => const SizedBox.shrink(),
                 ),
-                loading: () => const SizedBox.shrink(),
-                error: (_, __) => const SizedBox.shrink(),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

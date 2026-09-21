@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
@@ -49,10 +48,19 @@ class MushafPageImage extends StatefulWidget {
   static String archiveUrl(int pageNumber) =>
       '$_archiveRoot/${(pageNumber - 1).toString().padLeft(3, '0')}.jpg';
 
-  /// Development hosts only exist on the machine running Flutter. A release
-  /// installed on a phone must not wait for them before trying the archive.
+  /// Whether to skip the API and fetch straight from the archive.
+  ///
+  /// Development hosts only exist on the machine running Flutter, so anything
+  /// else asking for them waits for a connection that will never be answered
+  /// and only then falls back. That wait was the whole reason a Mushaf page
+  /// took "ages" to appear: the scan is only ~340 KB, but nothing started
+  /// downloading it until localhost had finished timing out.
+  ///
+  /// This used to exempt the web build, on the assumption that a browser could
+  /// not fetch the archive directly. It can — archive.org serves
+  /// `Access-Control-Allow-Origin: *` — so the exemption only ever bought a
+  /// guaranteed delay.
   static bool shouldUseArchiveFirst(String apiBaseUrl) {
-    if (kIsWeb) return false;
     final host = Uri.tryParse(apiBaseUrl)?.host.toLowerCase();
     return host == null ||
         host.isEmpty ||

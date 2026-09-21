@@ -15,11 +15,21 @@ public sealed class ReciterPreferencesTests
     public void PersonalHabitsOverrideStaticAssumptions()
     {
         IReadOnlySet<int> habits = new HashSet<int> { 2 };
-        Assert.Equal(.5, SurahDifficulty.CoefficientFor(2, habits));
-        Assert.Equal(1, SurahDifficulty.CoefficientFor(18, habits));
-        Assert.Equal(1.5, SurahDifficulty.CoefficientFor(4, habits));
-        Assert.Equal(1, SurahDifficulty.CoefficientFor(114, habits));
-        Assert.Equal(.5, SurahDifficulty.CoefficientFor(18));
+
+        // Named by the reciter: holds longest, whatever the text says.
+        Assert.Equal(SurahDifficulty.EasiestCoefficient, SurahDifficulty.CoefficientFor(2, habits));
+
+        // Not named: the measurement stands, and the curated assumption that
+        // everyone reads Al-Kahf on a Friday no longer applies to this reciter.
+        foreach (var surah in new[] { 18, 4, 114 })
+        {
+            Assert.Equal(
+                SurahDifficulty.MeasuredCoefficient(surah),
+                SurahDifficulty.CoefficientFor(surah, habits));
+        }
+
+        // With nothing stated, the curated assumption does apply.
+        Assert.Equal(SurahDifficulty.EasiestCoefficient, SurahDifficulty.CoefficientFor(18));
     }
 
     [Fact]

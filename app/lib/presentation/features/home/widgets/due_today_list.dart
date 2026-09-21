@@ -13,7 +13,11 @@ class DueTodayList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(appStringsProvider);
-    final dueSurahs = surahs.where((s) => s.isDueToday).toList()
+    // Only surahs the reciter has actually been through. Everything else has
+    // never been claimed as memorised, so calling all 113 of them "due" turned
+    // the dashboard into a wall of red on day one and said nothing useful.
+    final dueSurahs =
+        surahs.where((s) => s.isAssessed && s.isDueToday).toList()
       ..sort((a, b) => a.number.compareTo(b.number)); // ascending order
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final muted = isDark

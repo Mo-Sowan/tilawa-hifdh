@@ -61,7 +61,16 @@ class PlanComposer extends StatelessWidget {
                   labelText: labels.planName,
                   hintText: labels.defaultPlanName,
                   prefixIcon: const Icon(Icons.edit_note_rounded),
-                  border: const OutlineInputBorder(),
+                  // Matches the two controls below, which were a bordered
+                  // Container and a Material button and so disagreed with each
+                  // other and with this on radius, height and border weight.
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 16,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -78,8 +87,10 @@ class PlanComposer extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () async {
+                    child: ComposerMetric(
+                      icon: Icons.schedule_rounded,
+                      label: reminderTime.format(context),
+                      onTap: () async {
                         final picked = await showTimePicker(
                           context: context,
                           initialTime: reminderTime,
@@ -88,8 +99,6 @@ class PlanComposer extends StatelessWidget {
                           onReminderChanged(picked);
                         }
                       },
-                      icon: const Icon(Icons.schedule_rounded),
-                      label: Text(reminderTime.format(context)),
                     ),
                   ),
                 ],

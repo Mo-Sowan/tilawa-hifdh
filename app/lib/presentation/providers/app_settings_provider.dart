@@ -20,6 +20,7 @@ class AppSettings {
     this.wisdomSeed = 0,
     this.profileImage,
     this.streakCelebratedOn,
+    this.celebrationSoundEnabled = true,
   });
 
   final AppLanguage language;
@@ -52,6 +53,11 @@ class AppSettings {
   /// Kept so hitting the target fires once, not on every review after it.
   final String? streakCelebratedOn;
 
+  /// Whether celebrations chime. On by default — the sound is a short
+  /// struck tone rather than music, so it suits the context — but anyone
+  /// who wants silence can have it.
+  final bool celebrationSoundEnabled;
+
   AppSettings copyWith({
     AppLanguage? language,
     int? themeIndex,
@@ -66,6 +72,7 @@ class AppSettings {
     String? profileImage,
     bool clearProfileImage = false,
     String? streakCelebratedOn,
+    bool? celebrationSoundEnabled,
   }) {
     return AppSettings(
       language: language ?? this.language,
@@ -82,6 +89,8 @@ class AppSettings {
       profileImage:
           clearProfileImage ? null : (profileImage ?? this.profileImage),
       streakCelebratedOn: streakCelebratedOn ?? this.streakCelebratedOn,
+      celebrationSoundEnabled:
+          celebrationSoundEnabled ?? this.celebrationSoundEnabled,
     );
   }
 }
@@ -107,6 +116,7 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
       final seedStr = await db.getSetting('wisdomSeed');
       final imageStr = await db.getSetting('profileImage');
       final celebratedStr = await db.getSetting('streakCelebratedOn');
+      final soundStr = await db.getSetting('celebrationSound');
       // Move on now, so the next launch opens somewhere else again.
       final seed = (int.tryParse(seedStr ?? '') ?? 0) + 1;
       await db.saveSetting('wisdomSeed', seed.toString());
@@ -125,6 +135,7 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
         wisdomSeed: seed,
         profileImage: (imageStr?.isEmpty ?? true) ? null : imageStr,
         streakCelebratedOn: celebratedStr,
+        celebrationSoundEnabled: soundStr != 'false',
       );
       NotificationService().alertsEnabled = state.lifecycleAlertsEnabled;
     } catch (e) {
@@ -207,6 +218,12 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
       '${day.year.toString().padLeft(4, '0')}-'
       '${day.month.toString().padLeft(2, '0')}-'
       '${day.day.toString().padLeft(2, '0')}';
+
+  Future<void> toggleCelebrationSound() async {
+    final next = !state.celebrationSoundEnabled;
+    state = state.copyWith(celebrationSoundEnabled: next);
+    await DatabaseService().saveSetting('celebrationSound', next.toString());
+  }
 
   void completeOnboarding() async {
     state = state.copyWith(hasSeenOnboarding: true);

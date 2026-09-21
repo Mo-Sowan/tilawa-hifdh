@@ -140,41 +140,76 @@ public class MasteryModelTests
             MasteryModel.MistakeRateAfterReview(0.1, 10));
     }
 
+    // This is the claim that replaced a hand-written "hard surahs" list: the
+    // four every hafiz names are found by measuring the text, not by being
+    // typed in. If the generator stops reproducing them, this fails.
     [Fact]
-    public void LongMutashabihatSurahsFadeFaster()
+    public void MeasurementAlonePutsTheLongMutashabihatSurahsInTheTopTier()
     {
         foreach (var surah in new[] { 2, 4, 5, 6 })
         {
-            Assert.Equal(SurahDifficulty.HardCoefficient, SurahDifficulty.CoefficientFor(surah));
+            Assert.Equal(SurahDifficulty.TierCoefficients.Count - 1, SurahDifficulty.MeasuredTier(surah));
+            Assert.Equal(SurahDifficulty.HardestCoefficient, SurahDifficulty.CoefficientFor(surah));
             Assert.True(SurahDifficulty.IsHard(surah));
         }
     }
 
     [Fact]
-    public void HabituallyRecitedSurahsHoldLonger()
+    public void EverySurahHasATierAndTiersAreOrdered()
     {
-        foreach (var surah in new[] { 18, 36, 67, 78, 100, 114 })
+        for (var surah = 1; surah <= 114; surah++)
         {
-            Assert.Equal(SurahDifficulty.EasyCoefficient, SurahDifficulty.CoefficientFor(surah));
-            Assert.True(SurahDifficulty.IsFrequentlyRecited(surah));
+            var tier = SurahDifficulty.MeasuredTier(surah);
+            Assert.InRange(tier, 0, 4);
+        }
+
+        for (var tier = 1; tier < SurahDifficulty.TierCoefficients.Count; tier++)
+        {
+            Assert.True(SurahDifficulty.TierCoefficients[tier] > SurahDifficulty.TierCoefficients[tier - 1]);
         }
     }
 
     [Fact]
-    public void EverythingElseIsLeftAlone()
+    public void HabituallyRecitedSurahsHoldLongest()
     {
-        foreach (var surah in new[] { 1, 3, 10, 50, 77 })
+        foreach (var surah in new[] { 1, 18, 36, 67, 78, 100, 114 })
         {
-            Assert.Equal(SurahDifficulty.NeutralCoefficient, SurahDifficulty.CoefficientFor(surah));
+            Assert.Equal(SurahDifficulty.EasiestCoefficient, SurahDifficulty.CoefficientFor(surah));
+            Assert.True(SurahDifficulty.IsFrequentlyRecited(surah));
+        }
+    }
+
+    // Al-Kahf, Yaseen and Al-Mulk measure as unremarkable text. They are easy
+    // because of when they are recited, not how they read.
+    [Fact]
+    public void TheCuratedLayerOverridesWhatTheTextAloneWouldSay()
+    {
+        foreach (var surah in new[] { 18, 36, 67 })
+        {
+            Assert.Equal(SurahDifficulty.NeutralCoefficient, SurahDifficulty.MeasuredCoefficient(surah));
+            Assert.Equal(SurahDifficulty.EasiestCoefficient, SurahDifficulty.CoefficientFor(surah));
+        }
+    }
+
+    [Fact]
+    public void StatedHabitsReplaceTheAssumptionAboutPeopleInGeneral()
+    {
+        var stated = new HashSet<int> { 2 };
+
+        Assert.Equal(SurahDifficulty.EasiestCoefficient, SurahDifficulty.CoefficientFor(2, stated));
+
+        foreach (var surah in new[] { 18, 4, 114 })
+        {
+            Assert.Equal(SurahDifficulty.MeasuredCoefficient(surah), SurahDifficulty.CoefficientFor(surah, stated));
         }
     }
 
     [Fact]
     public void AHardSurahHalvesSoonerThanANeutralOne()
     {
-        var hard = MasteryModel.HalfLifeDays(1, SurahDifficulty.HardCoefficient);
+        var hard = MasteryModel.HalfLifeDays(1, SurahDifficulty.HardestCoefficient);
         var neutral = MasteryModel.HalfLifeDays(1);
-        var easy = MasteryModel.HalfLifeDays(1, SurahDifficulty.EasyCoefficient);
+        var easy = MasteryModel.HalfLifeDays(1, SurahDifficulty.EasiestCoefficient);
 
         Assert.True(hard < neutral);
         Assert.True(easy > neutral);
@@ -191,7 +226,7 @@ public class MasteryModelTests
             1.0, reviewed, 1, SurahDifficulty.CoefficientFor(surah), now: Now);
 
         var baqarah = MasteryFor(2);
-        var neutral = MasteryFor(3);
+        var neutral = MasteryFor(19);
         var naba = MasteryFor(78);
 
         Assert.True(baqarah < neutral);
